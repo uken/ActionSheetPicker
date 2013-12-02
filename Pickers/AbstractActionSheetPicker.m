@@ -107,7 +107,7 @@
     
 }
 
-- (UIView *)configuredPickerView {
+- (UIPickerView *)configuredPickerView {
     NSAssert(NO, @"This is an abstract class, you must use a subclass of AbstractActionSheetPicker (like ActionSheetStringPicker)");
     return nil;
 }
@@ -128,7 +128,7 @@
 #pragma mark - Actions
 
 - (void)showActionSheetPicker {
-    UIView *masterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.viewSize.width, 260)];    
+    UIView *masterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.viewSize.width, 260)];
     UIToolbar *pickerToolbar = [self createPickerToolbarWithTitle:self.title];
     [pickerToolbar setBarStyle:UIBarStyleBlackTranslucent];
     [masterView addSubview:pickerToolbar];
@@ -206,7 +206,7 @@
         [barItems addObject:button];
         index++;
     }
-    if (NO == self.hideCancel) {
+    if (NO == self.hideCancel && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         UIBarButtonItem *cancelBtn = [self createButtonWithType:UIBarButtonSystemItemCancel target:self action:@selector(actionPickerCancel:)];
         [barItems addObject:cancelBtn];
     }
@@ -224,7 +224,7 @@
 }
 
 - (UIBarButtonItem *)createToolbarLabelWithTitle:(NSString *)aTitle {
-    UILabel *toolBarItemlabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 180,30)];
+    UILabel *toolBarItemlabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 180, 30)];
     [toolBarItemlabel setTextAlignment:UITextAlignmentCenter];    
     [toolBarItemlabel setTextColor:[UIColor whiteColor]];    
     [toolBarItemlabel setFont:[UIFont boldSystemFontOfSize:16]];    
@@ -241,8 +241,13 @@
 #pragma mark - Utilities and Accessors
 
 - (CGSize)viewSize {
-    if (![self isViewPortrait])
-        return CGSizeMake(480, 320);
+    if (![self isViewPortrait]) {
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+            return CGSizeMake(480, 320);
+        } else {
+            return CGSizeMake([DeviceInfo deviceMainScreenBoundsLandscape].size.width, 320);
+        }
+    }
     return CGSizeMake(320, 480);
 }
 
@@ -267,7 +272,7 @@
 #pragma mark - Popovers and ActionSheets
 
 - (void)presentPickerForView:(UIView *)aView {
-    self.presentFromRect = aView.frame;
+    self.presentFromRect = CGRectMake(0, 0, self.containerView.frame.size.width, self.containerView.frame.size.height);
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
         [self configureAndPresentPopoverForView:aView];
@@ -281,13 +286,7 @@
     if ([self isViewPortrait]) {
         paddedSheetTitle = @"\n\n\n"; // looks hacky to me
     } else {
-        NSString *reqSysVer = @"5.0";
-        NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
-        if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending) {
-            sheetHeight = self.viewSize.width;
-        } else {
-            sheetHeight += 103;
-        }
+        sheetHeight = 490;
     }
     _actionSheet = [[UIActionSheet alloc] initWithTitle:paddedSheetTitle delegate:nil cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
     [_actionSheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
@@ -298,12 +297,15 @@
 
 - (void)presentActionSheet:(UIActionSheet *)actionSheet {
     NSParameterAssert(actionSheet != NULL);
-    if (self.barButtonItem)
+    if (self.barButtonItem) {
         [actionSheet showFromBarButtonItem:_barButtonItem animated:YES];
-    else if (self.containerView && NO == CGRectIsEmpty(self.presentFromRect))
+    }
+    else if (self.containerView && NO == CGRectIsEmpty(self.presentFromRect)) {
         [actionSheet showFromRect:_presentFromRect inView:_containerView animated:YES];
-    else
+    }
+    else {
         [actionSheet showInView:_containerView];
+    }
 }
 
 - (void)configureAndPresentPopoverForView:(UIView *)aView {
