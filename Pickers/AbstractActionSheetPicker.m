@@ -245,7 +245,7 @@
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
             return CGSizeMake(480, 320);
         } else {
-            return CGSizeMake([DeviceInfo deviceMainScreenBoundsLandscape].size.width, 320);
+            return CGSizeMake([AbstractActionSheetPicker deviceMainScreenBoundsLandscape].size.width, 320);
         }
     }
     return CGSizeMake(320, 480);
@@ -339,6 +339,24 @@
         presentRect = CGRectMake(origin.center.x, origin.center.y, 1, 1);
         [popover presentPopoverFromRect:presentRect inView:origin permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     }
+}
+
++ (CGRect)deviceMainScreenBoundsLandscape {
+    return [AbstractActionSheetPicker deviceMainScreenBoundsWithOrientation:UIInterfaceOrientationLandscapeLeft];
+}
+
++ (CGRect)deviceMainScreenBoundsWithOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    
+    if ((UIInterfaceOrientationIsLandscape(interfaceOrientation) && screenBounds.size.width < screenBounds.size.height) ||
+        (UIInterfaceOrientationIsPortrait(interfaceOrientation) && screenBounds.size.width > screenBounds.size.height)) {
+        float screenBoundsHeight = screenBounds.size.width;
+        float screenBoundsWidth = screenBounds.size.height;
+        screenBounds.size.width = screenBoundsWidth;
+        screenBounds.size.height = screenBoundsHeight;
+    }
+    
+    return screenBounds;
 }
 
 @end
