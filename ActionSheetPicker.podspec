@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name          = "ActionSheetPicker"
-  s.version       = "0.0.2-uken"
+  s.version       = "0.0.3-uken"
   s.summary    = "Quickly reproduce the dropdown UIPickerView / ActionSheet functionality from Safari on iPhone/ iOS / CocoaTouch."
   s.homepage   = "https://github.com/uken/ActionSheetPicker"
   s.license       = 'BSD'
@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   'Evan Cordell'          => 'http://github.com/ecordell',
   'Greg Combs'           => 'http://github.com/grgcombs',
   'Hari Karam Singh'    => 'http://github.com/Club15CC' }
-  s.source       = { :git => 'https://github.com/uken/ActionSheetPicker.git', :tag => 'v0.0.2-uken' }
+  s.source       = { :git => 'https://github.com/uken/ActionSheetPicker.git', :tag => 'v0.0.3-uken' }
   s.platform       = :ios
   s.source_files  = 'ActionSheetPicker.h', 'Pickers/*.{h,m}'
   s.framework   = 'UIKit'
