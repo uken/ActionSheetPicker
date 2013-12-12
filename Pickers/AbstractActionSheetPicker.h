@@ -57,4 +57,7 @@
     //For subclasses. This responds to a custom button being pressed.
 - (IBAction)customButtonPressed:(id)sender;
 
++ (CGRect)deviceMainScreenBoundsLandscape;
+
++ (CGRect)deviceMainScreenBoundsWithOrientation:(UIInterfaceOrientation)interfaceOrientation;
 @end
